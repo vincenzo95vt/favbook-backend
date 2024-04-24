@@ -3,7 +3,7 @@ const Product = require("../models/productsModel")
 
 const getAllProducts = async (req, res) => {
     try {
-        const products = await Product.find() //Buscamos por id en  la base de datos
+        const products = await Product.find() //Buscamos en  la base de datos
         if(products.length === 0) return res.status(200).json({
             status: "success",
             message: "There's no products in your database", //Mostramos error si no encontramos nada
