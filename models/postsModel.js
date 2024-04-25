@@ -1,11 +1,11 @@
 const mongoose = require("mongoose")
 
-const productsSchema = new mongoose.Schema({
-    image:{ //Aqui vamos a almacenar la URL de la imagen, no se almacena directamente en mongo, sino que se almacena solo la URL donde esa imagen esta alojada.
+const postSchema = new mongoose.Schema({
+    post:{ //Aqui vamos a almacenar la URL de la imagen, no se almacena directamente en mongo, sino que se almacena solo la URL donde esa imagen esta alojada.
         type: String,
         require: true
     },
-    productName:{ //Nombre del producto que vamos a poner cada vez que subamos una imagen.
+    postName:{ //Nombre del producto que vamos a poner cada vez que subamos una imagen.
         type: String,
         require: true
     },
@@ -25,6 +25,6 @@ const productsSchema = new mongoose.Schema({
     }
 })
 
-const Products = mongoose.model("Products", productsSchema)
+const Post = mongoose.model("Products", postSchema)
 
-module.exports = Products;
+module.exports = Post;
