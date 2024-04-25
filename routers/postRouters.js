@@ -17,3 +17,5 @@ router.post("/", addNewPost) //Incluimos productos.
 router.patch("/:id", updatePostById) //Actualizamos productos.
 
 router.delete("/:id", deletePostById) //Eliminamos producto basandonos en el ID.
+
+module.exports = router

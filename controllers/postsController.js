@@ -1,17 +1,16 @@
 const Post = require("../models/postsModel")
-const Product = require("../models/postsModel")
 
 
 const getAllPosts = async (req, res) => {
     try {
-        const posts = await Product.find() //Buscamos en  la base de datos
+        const posts = await Post.find() //Buscamos en  la base de datos
         if(posts.length === 0) return res.status(200).json({
             status: "success",
-            message: "There's no products in your database", //Mostramos error si no encontramos nada
+            message: "There's no Posts in your database", //Mostramos error si no encontramos nada
         })
         res.status(200).json({
             status:"sucess",
-            data: products //Mostramos productos si encontramos algo en la base de datos.
+            data: posts //Mostramos Postos si encontramos algo en la base de datos.
         })
     } catch (error) {
         res.status(400).json({
@@ -24,8 +23,8 @@ const getAllPosts = async (req, res) => {
 
 const getPostById = async (req, res) => {
     try {
-        const idProduct = req.params.id //recogemos el request del body basandonos en el id.
-        const product = await Product.findById(idProduct) //Los mismo que en el getAllProducts, pero solamente buscandolo por el id 
+        const idPost = req.params.id //recogemos el request del body basandonos en el id.
+        const product = await Product.findById(idPost) //Los mismo que en el getAllProducts, pero solamente buscandolo por el id 
         if(!product) return res.status(200).json({
             status: "success",
             message: "There's no product with that id" //Devolvemos error si no encontramos nada con ese id.
@@ -45,8 +44,8 @@ const getPostById = async (req, res) => {
 
 const addNewPost = (req, res) =>{
     try {
-        const {image, PostName, description, comments, favourites} = req.body
-        const newPost = new Post({image, PostName, description, comments})
+        const {post, postName, description, comments} = req.body
+        const newPost = new Post({post, postName, description, comments})
         newPost.save()
         return res.status(200).json({
             status: "Success",
@@ -88,7 +87,16 @@ const updatePostById = async (req, res) => {
 
 const deletePostById = (req, res) => {
     try {
-        
+        const idPost = req.params.id
+        const  deletedPost = Post.findByIdAndDelete(idPost);
+        if(!deletedPost) return res.status(200).json({
+            status: "success",
+            message: "Cannot found your id"
+        })
+        return  res.status(200).json({
+                status:'Success',
+                data: deletedPost
+             });  
     } catch (error) {
         res.status(400).json({
             status: "Error",
