@@ -1,5 +1,8 @@
 const Users = require("../models/profileUserSchema")
 const bcrypt = require("bcrypt")
+const  jwt = require("jsonwebtoken");
+const { generateToken } = require("../utils/utils");
+
 
 const addNewUser = async (req, res) =>{
     try {
@@ -24,35 +27,51 @@ const addNewUser = async (req, res) =>{
             error: error.message
         })
     }
-}
-
+};
 const loginUser = async (req, res) =>{
     //En esta funcion nos logueamos, recordad que este codigo esta hecho aun sin los middlewares, una vez hechos se modifican para que todo gire en torno a ello.
     try {
         const  {email, password} = req.body;
-        const data = await Users.findById(idUser)
+        const data = await Users.findOne({email:email})
         if(data) {
-            const validatePassword = await bcrypt.compare(password, user.password);
+            const validatePassword = await bcrypt.compare(password, data.password);
             if(validatePassword){
                 const payload = {
-                    userId: user._id,
-                    email: user.email,
-                    role: user.role
-                }
-            }
-            //Aqui debajo van los tokens, cuando hagamos los middlewares  de autenticacion actualizamos codigo.
+                    userId: data._id,
+                    email: data.email,
+                    nombre : data.name,
+                };
+                    
+                //Aqui debajo van los tokens, cuando hagamos los middlewares  de autenticacion actualizamos codigo.
+                const token = generateToken(payload, false);
+                const token_refresh = generateToken(payload, true);
+
+                return res.status(200).json({
+                    status: "success",
+                    message: "Login successfully",
+                    data: data,
+                    token: token,
+                    token_refresh: token_refresh
+            })
+
+        }else {
+            return res.status(200).json({
+                status: "error",
+                message:"email y contraseña no coinciden"
+            })
         }
-        return res.status(200).json({
-            status: "success",
-            message: "Login successfully"
-        })        
+        }  
+          
     } catch (error) {
         res.status(400).json({
+
             status: "error",
-            message: "cannot login"
+
+            message: "cannot login",
+             error: error.message
         })
     }
-}
+};
 
 const getAllUsers = async (req, res) =>{
     //Podriamos poner que solo puedan acceder a los Users los admins o los que tienen tokens
