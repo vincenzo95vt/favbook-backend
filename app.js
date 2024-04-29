@@ -2,6 +2,8 @@
 const { error } = require("console")
 //Instalamos express para trabajar en el back
 const express = require("express")
+//Llamamos a cors
+const cors = require("cors")
 //Definimos nuestro puerto en Localhost
 const PORT = 4000
 //Instalamos mongoose para conectar a mongoDB
@@ -11,6 +13,9 @@ const app = express()
 app.use(express.json())
 //Instalamos dotenv para guardar claves como Tokens, Secret tokens y Url de mongodb con su contraseña
 require("dotenv").config()
+//Declaramos el cors, para conectar el back con el front:
+app.use(cors())
+
 //Definimos la url de mongo llamando a .env en una constante
 const urlMongodb = process.env.MONGO_URL_PSWD
 

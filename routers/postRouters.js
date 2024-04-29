@@ -12,7 +12,7 @@ router.get("/", getAllPosts) //Recogemos todos los productos.
 
 router.get("/:id", getPostById) //Recogemos productos por ID
 
-router.post("/", addNewPost) //Incluimos productos.
+router.post("/", addNewPost) //Añadimos publicaciones.
 
 router.patch("/:id", updatePostById) //Actualizamos productos.
 

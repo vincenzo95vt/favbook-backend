@@ -5,9 +5,9 @@ const verifyToken = require("../middlewares/auth")
 
 router.post("/signUp", addNewUser) //Nos registramos
 
-router.post("/login", verifyToken,loginUser) //Nos logueamos
+router.post("/login",   loginUser) //Nos logueamos
 
-router.get("/users", getAllUsers)//Cogemos los datos de los usuarios.
+router.get("/users", verifyToken, getAllUsers)//Cogemos los datos de los usuarios.
 
 router.patch("/:id", updateUserData) //Modificamos los datos de usuario.(Podemos ponerlo con o sin verificacion de Admin)
 

@@ -41,7 +41,7 @@ const loginUser = async (req, res) =>{
                     email: data.email,
                     nombre : data.name,
                 };
-                    
+                console.log("login success")
                 //Aqui debajo van los tokens, cuando hagamos los middlewares  de autenticacion actualizamos codigo.
                 const token = generateToken(payload, false);
                 const token_refresh = generateToken(payload, true);
