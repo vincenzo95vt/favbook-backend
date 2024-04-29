@@ -1,10 +1,11 @@
 const router = require("express").Router()
 const {addNewUser, updateUserData, getAllUsers, loginUser, deleteUserById} = require("../controllers/userController")
+const verifyToken = require("../middlewares/auth")
 
 
 router.post("/signUp", addNewUser) //Nos registramos
 
-router.post("/login", loginUser) //Nos logueamos
+router.post("/login", verifyToken,loginUser) //Nos logueamos
 
 router.get("/users", getAllUsers)//Cogemos los datos de los usuarios.
 

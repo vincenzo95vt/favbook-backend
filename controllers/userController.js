@@ -57,7 +57,7 @@ const loginUser = async (req, res) =>{
         }else {
             return res.status(200).json({
                 status: "error",
-                message:"email y contraseña no coinciden"
+                message:"email and password don't match"
             })
         }
         }  
