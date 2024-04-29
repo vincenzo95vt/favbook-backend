@@ -1,4 +1,5 @@
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
+const { type } = require("os");
 
 const postSchema = new mongoose.Schema({
     post:{ //Aqui vamos a almacenar la URL de la imagen, no se almacena directamente en mongo, sino que se almacena solo la URL donde esa imagen esta alojada.
@@ -14,15 +15,30 @@ const postSchema = new mongoose.Schema({
         require: true,
         default: ""
     },
-    comments:{//Comentarios que va a recibir de otros usuarios la foto.
-        type: String,
-        require: false, //Hay que preguntar si es false o true, porque los comentarios los ponen los demas usuarios, y por defecto no habrá.
+    userPoster:{
+        type: mongoose.Schema.Types.ObjectId,   
+        ref: "Users",
+        required: true
     },
-    favourites:{// Recuento de favoritos que tenga la foto.
-        type: Number,
-        require: false, // Lo mismo que en comentarios...
-        default: 0
-    }
+    comments:[{ //Comentarios que va a recibir de otros usuarios la foto.
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Users",
+        content:{type: String},
+        date: {
+            type: Date,
+            default: Date.now
+        },
+        require: false, 
+    }],
+    date:{
+        type: Date,  
+        default: Date.now(),
+        require: true
+    },
+    favourites:[{// Recuento de favoritos que tenga la foto.
+        type: mongoose.Schema.Types.ObjectId,
+        ref:"Users", 
+    }]
 })
 
 const Post = mongoose.model("Products", postSchema)

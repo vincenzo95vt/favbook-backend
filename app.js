@@ -8,11 +8,14 @@ const PORT = 4000
 const mongoose = require("mongoose")
 //Definimos constante app para levantar servidor con  express
 const app = express()
+app.use(express.json())
 //Instalamos dotenv para guardar claves como Tokens, Secret tokens y Url de mongodb con su contraseña
 require("dotenv").config()
 //Definimos la url de mongo llamando a .env en una constante
 const urlMongodb = process.env.MONGO_URL_PSWD
 
+const postRouters = require("./routers/postRouters")
+const userRouters = require("./routers/userRouters")
 //Conectaqmos con mongoose a la url que hemos definido antes
 mongoose.connect(urlMongodb)
 //Guardamos en una constante db la conexion.
@@ -34,7 +37,9 @@ db.on("disconnected", (error) => {
     console.error("mongoose default conection is disconnected")
 })
 
+app.use("/user", userRouters)
 
+app.use("/posts", postRouters)
 //Aqui lanzamos un app.listen para definir nuestra url para seguir el link desde la consola.
 app.listen(PORT, () => {
         console.log(`Server running in http://localhost:${PORT}`)

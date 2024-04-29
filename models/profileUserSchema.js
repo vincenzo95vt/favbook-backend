@@ -30,16 +30,16 @@ const profileUserSchema =  new mongoose.Schema({
         type: String,
         require: true
     },
-    followers:{ //Recuento de seguidores
-        type: Number,
+    followers:[{ //Recuento de seguidores
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Users",
         require: true,
-        default: 0
-    },
-    following:{// Recuento de seguidos
-        type: Number,
+    }],
+    following:[{// Recuento de seguidos
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Users",
         require: true,
-        default: 0
-    },
+    }],
     genre:{//Genero que sea, si hombre o mujer.
         type: [String],
         enum: ["Hombre", "Mujer"],
