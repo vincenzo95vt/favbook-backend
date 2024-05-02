@@ -6,6 +6,10 @@ const express = require("express")
 const cors = require("cors")
 //Definimos nuestro puerto en Localhost
 const PORT = 4000
+//importacion de la libreria de swagger una, una para la parte visual y la otra la parte de interfaz
+const swaggerUi = require("swagger-ui-express");
+const swaggerSpec = require("./swagger/swagger");
+
 //Instalamos mongoose para conectar a mongoDB
 const mongoose = require("mongoose")
 //Definimos constante app para levantar servidor con  express
@@ -45,6 +49,7 @@ db.on("disconnected", (error) => {
 app.use("/user", userRouters)
 
 app.use("/posts", postRouters)
+app.use("api-doc", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 //Aqui lanzamos un app.listen para definir nuestra url para seguir el link desde la consola.
 app.listen(PORT, () => {
         console.log(`Server running in http://localhost:${PORT}`)
