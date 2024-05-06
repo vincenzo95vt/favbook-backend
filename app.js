@@ -49,7 +49,7 @@ db.on("disconnected", (error) => {
 app.use("/user", userRouters)
 
 app.use("/posts", postRouters)
-app.use("api-doc", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use("/api-doc", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 //Aqui lanzamos un app.listen para definir nuestra url para seguir el link desde la consola.
 app.listen(PORT, () => {
         console.log(`Server running in http://localhost:${PORT}`)
