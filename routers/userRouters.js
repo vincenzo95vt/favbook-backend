@@ -1,52 +1,61 @@
-const router = require("express").Router()
-const {addNewUser, updateUserData, getAllUsers, loginUser, deleteUserById} = require("../controllers/userController")
-const verifyToken = require("../middlewares/auth")
+const router = require("express").Router();
+const {
+  addNewUser,
+  updateUserData,
+  getAllUsers,
+  loginUser,
+  deleteUserById,
+} = require("../controllers/userController");
+const verifyToken = require("../middlewares/auth");
 
 /**
  * @swagger
- * /user:
+ * /user/signUp:
  *   post:
-    *    summary: Registro
-    *    description: Registra un nuevo usuario
-    *    requestBody:
-    *         required: true
-    *         content:
-    *           application/json:
-    *             schema:
-    *               type: object
-    *               properties:
-    *                 userName: 
-    *                   type: string
-    *                   description: El nombre de usuario
-    *                 email: 
-    *                   type: string
-    *                   description: El correo electronico
-    *                 password: 
-    *                   type: string
-    *                   description: La contraseña de la cuenta
-    *                 age: 
-    *                   type: number
-    *                   description: La edad del usuario
-    *                 name: 
-    *                   type: string
-    *                   description: El nombre real del usuario
-    *                 lastName: 
-    *                   type: string
-    *                   description: El apellido real del usuario
-    *                 genre: 
-    *                   type: string
-    *                   description: El genero real del usuario
-    *    responses:
-    *         201: 
-    *          description: Usuario creado correctamente 
-    *         400: 
-    *          description: No se ha podido crear el usuario
+ *       summary: Registro
+ *       description: Registra un nuevo usuario
+ *       requestBody:
+ *            required: true
+ *            content:
+ *              application/json:
+ *                schema:
+ *                  type: object
+ *                  properties:
+ *                    userName:
+ *                      type: string
+ *                      description: El nombre de usuario
+ *                    email:
+ *                      type: string
+ *                      description: El correo electronico
+ *                    password:
+ *                      type: string
+ *                      description: La contraseña de la cuenta
+ *                    age:
+ *                      type: number
+ *                      description: La edad del usuario
+ *                    name:
+ *                      type: string
+ *                      description: El nombre real del usuario
+ *                    lastName:
+ *                      type: string
+ *                      description: El apellido real del usuario
+ *                    genre:
+ *                      type: string
+ *                      description: El genero real del usuario
+ *                    role: 
+ *                      type: string
+ *                      description: El rol del usuario
+ *       responses:
+ *            201:
+ *             description: Usuario creado correctamente
+ *            400:
+ *             description: No se ha podido crear el usuario
  */
-router.post("/signUp", addNewUser) //Nos registramos
+router.post("/signUp", addNewUser); //Nos registramos
 
 /**
  * @swagger
- * /user:
+ * /user/login:
  *   post:
  *       summary: Inicio de sesion
  *       description: Inicio de sesion con un usuario existente
@@ -57,39 +66,45 @@ router.post("/signUp", addNewUser) //Nos registramos
  *                schema:
  *                  type: object
  *                  properties:
- *                    email: 
+ *                    email:
  *                      type: string
  *                      description: El correo electronico
- *                    password: 
+ *                    password:
  *                      type: string
  *                      description: La contraseña de la cuenta
  *       responses:
- *            200: 
- *             description: El usuario ha iniciado sesion correctamente 
- *            203: 
+ *            200:
+ *             description: El usuario ha iniciado sesion correctamente
+ *            203:
  *             description: La peticion es correcta pero no coinciden el email y la contraseña
- *            401: 
+ *            401:
  *             description: No se ha podido iniciar sesion
  */
-router.post("/login", loginUser) //Nos logueamos
+router.post("/login", loginUser); //Nos logueamos
 
 /**
  * @swagger
- * /user:
+ * /user/users:
  *   get:
  *       summary: Obtiene usuarios
  *       description: Obtiene todos los datos de los usuarios
+ *       parameters:
+ *       - in: header
+ *         name: auth-token
+ *         description: Campo para pasarle el token del usuario
+ *         required: true
+ *         type: string
  *       responses:
- *            200: 
- *             description: obtiene los datos de los usuarios correctamente 
+ *            200:
+ *             description: obtiene los datos de los usuarios correctamente
  *            204:
  *              description: Peticion correcta pero no hay datos
- *            400: 
+ *            400:
  *             description: Ha fallado la peticiones de obtener los datos de usuarios
- * 
- * 
+ *
+ *
  */
-router.get("/users", verifyToken, getAllUsers)//Cogemos los datos de los usuarios.
+router.get("/users", verifyToken, getAllUsers); //Cogemos los datos de los usuarios.
 
 /**
  * @swagger
@@ -111,25 +126,25 @@ router.get("/users", verifyToken, getAllUsers)//Cogemos los datos de los usuario
  *         schema:
  *           type: object
  *           properties:
- *             userName: 
+ *             userName:
  *               type: string
  *               description: El nombre de usuario
- *             email: 
+ *             email:
  *               type: string
  *               description: El correo electronico
- *             password: 
+ *             password:
  *               type: string
  *               description: La contraseña de la cuenta
- *             age: 
+ *             age:
  *               type: number
  *               description: La edad del usuario
- *             name: 
+ *             name:
  *               type: string
  *               description: El nombre real del usuario
- *             lastName: 
+ *             lastName:
  *               type: string
  *               description: El apellido real del usuario
- *             genre: 
+ *             genre:
  *               type: string
  *               description: El genero real del usuario
  *     responses:
@@ -138,7 +153,7 @@ router.get("/users", verifyToken, getAllUsers)//Cogemos los datos de los usuario
  *         400:
  *          description: No se puede actualizar el usuario
  */
-router.patch("/:id", updateUserData) //Modificamos los datos de usuario.(Podemos ponerlo con o sin verificacion de Admin)
+router.patch("/:id", updateUserData); //Modificamos los datos de usuario.(Podemos ponerlo con o sin verificacion de Admin)
 
 /**
  * @swagger
@@ -161,6 +176,6 @@ router.patch("/:id", updateUserData) //Modificamos los datos de usuario.(Podemos
  *       '400':
  *         description: No se puede eliminar el usuario
  */
-router.delete("/:id", deleteUserById) //Borramos usuario mediante el id.(Aqui ponemos verifyAdmin)
+router.delete("/:id", deleteUserById); //Borramos usuario mediante el id.(Aqui ponemos verifyAdmin)
 
-module.exports = router
+module.exports = router;
