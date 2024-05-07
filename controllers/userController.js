@@ -1,7 +1,7 @@
 const Users = require("../models/profileUserSchema")
 const bcrypt = require("bcrypt")
 const  jwt = require("jsonwebtoken");
-const { generateToken } = require("../utils/utils");
+const { generateToken, userExist } = require("../utils/utils");
 
 
 const addNewUser = async (req, res) =>{
@@ -15,6 +15,11 @@ const addNewUser = async (req, res) =>{
             name: name, 
             lastName: lastName, 
             genre: genre})
+        //En esta funcion vamos a comprobar si el usuario existe en la base de datos desde el back para mandar un mensaje al front por si esta o no. 
+        if(userExist(user.email)) return res.status(409).json({
+            message: "The email is already in use",
+            status: "error"
+        })
         user.save()
         res.status(200).json({
             status: "success",
@@ -41,7 +46,6 @@ const loginUser = async (req, res) =>{
                     email: data.email,
                     nombre : data.name,
                 };
-                console.log("login success")
                 //Aqui debajo van los tokens, cuando hagamos los middlewares  de autenticacion actualizamos codigo.
                 const token = generateToken(payload, false);
                 const token_refresh = generateToken(payload, true);
@@ -55,8 +59,8 @@ const loginUser = async (req, res) =>{
             })
 
         }else {
-            return res.status(200).json({
-                status: "error",
+            return res.status(401).json({
+                status: "unauthorize",
                 message:"email and password don't match"
             })
         }

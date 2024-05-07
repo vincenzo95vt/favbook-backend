@@ -44,8 +44,8 @@ const getPostById = async (req, res) => {
 
 const addNewPost = (req, res) =>{
     try {
-        const {post, postName, description, comments} = req.body
-        const newPost = new Post({post, postName, description, comments})
+        const {post, postName, description, comments, userPoster} = req.body
+        const newPost = new Post({post, postName, description, comments, userPoster})
         newPost.save()
         return res.status(200).json({
             status: "Success",
