@@ -1,4 +1,6 @@
-const Post = require("../models/postsModel")
+const Post = require("../models/postsModel");
+const { post } = require("../routers/postRouters");
+const ProfileUser = require("../models/profileUserSchema");
 
 
 const getAllPosts = async (req, res) => {
@@ -105,5 +107,42 @@ const deletePostById = (req, res) => {
         })
     }
 }
+// El usuario introduce el nombre del producto que decea buscar 
+const getProdutsName = async (req,res) => {
+    try {
+      const productName = req.body.productName;
+      const product = await Post.find({postName: productName});
+      res.status(200).json({
+        status: "success",
+        data: product,
+      })
+    } catch (error) {
+        res.status(400).json({
+            status: "Error",
+            message: "searching for the product",
+            error: error.message
+        })
+    } 
+};
 
-module.exports = {getAllPosts, getPostById, addNewPost, updatePostById, deletePostById}
+// El usuario introduce el nombre que decea buscar
+const getFindUser = async (req,res) => {
+    try{
+        const findUser = req.body.findUser;
+        const user = await ProfileUser.find({userName: findUser});
+        res.status(200).json({
+            status: "success",
+            data: user,
+        })
+    } catch (error) {
+        res.status(400).json({
+            status: "Error",
+            message: "The user was not found",
+            error: error.message
+        })
+    }
+   
+};
+ 
+
+module.exports = {getAllPosts, getPostById, addNewPost, updatePostById, deletePostById, getProdutsName, getFindUser}

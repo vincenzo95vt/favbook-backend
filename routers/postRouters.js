@@ -4,7 +4,9 @@ const {
     getPostById, 
     addNewPost, 
     updatePostById, 
-    deletePostById
+    deletePostById,
+    getProdutsName,
+    getFindUser
 } = require("../controllers/postsController")
 
 
@@ -17,5 +19,9 @@ router.post("/", addNewPost) //Incluimos productos.
 router.patch("/:id", updatePostById) //Actualizamos productos.
 
 router.delete("/:id", deletePostById) //Eliminamos producto basandonos en el ID.
+
+router.get("/getproducts", getProdutsName); //buscar productos por nombre.
+
+router.get("/getuser",getFindUser); // buscar usuarios por su nombre. 
 
 module.exports = router
