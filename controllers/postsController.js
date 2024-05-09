@@ -6,12 +6,12 @@ const ProfileUser = require("../models/profileUserSchema");
 const getAllPosts = async (req, res) => {
     try {
         const posts = await Post.find() //Buscamos en  la base de datos
-        if(posts.length === 0) return res.status(200).json({
+        if (posts.length === 0) return res.status(200).json({
             status: "success",
             message: "There's no Posts in your database", //Mostramos error si no encontramos nada
         })
         res.status(200).json({
-            status:"sucess",
+            status: "sucess",
             data: posts //Mostramos Postos si encontramos algo en la base de datos.
         })
     } catch (error) {
@@ -27,7 +27,7 @@ const getPostById = async (req, res) => {
     try {
         const idPost = req.params.id //recogemos el request del body basandonos en el id.
         const product = await Product.findById(idPost) //Los mismo que en el getAllProducts, pero solamente buscandolo por el id 
-        if(!product) return res.status(200).json({
+        if (!product) return res.status(200).json({
             status: "success",
             message: "There's no product with that id" //Devolvemos error si no encontramos nada con ese id.
         })
@@ -40,14 +40,14 @@ const getPostById = async (req, res) => {
             status: "Error",
             message: "Cannot get the photo", //Si ha habido algun error lo mostramos en un res.status(error)
             error: error.message
-        }) 
+        })
     }
 }
 
-const addNewPost = (req, res) =>{
+const addNewPost = (req, res) => {
     try {
-        const {post, postName, description, comments} = req.body
-        const newPost = new Post({post, postName, description, comments})
+        const { post, postName, description, comments } = req.body
+        const newPost = new Post({ post, postName, description, comments })
         newPost.save()
         return res.status(200).json({
             status: "Success",
@@ -66,16 +66,18 @@ const addNewPost = (req, res) =>{
 const updatePostById = async (req, res) => {
     try {
         const postId = req.params.id
-        const {post, postName, description, comments, favourites} = req.body;
-        const dataModified = await Post.findByIdAndUpdate({postId}, {$set:{
-            post: post,
-            postName: postName, 
-            description: description, 
-            comments: comments, 
-            favourites: favourites
-        }})
+        const { post, postName, description, comments, favourites } = req.body;
+        const dataModified = await Post.findByIdAndUpdate({ postId }, {
+            $set: {
+                post: post,
+                postName: postName,
+                description: description,
+                comments: comments,
+                favourites: favourites
+            }
+        })
         return res.status(200).json({
-            status:"Success",
+            status: "Success",
             data: dataModified
         })
     } catch (error) {
@@ -90,15 +92,15 @@ const updatePostById = async (req, res) => {
 const deletePostById = (req, res) => {
     try {
         const idPost = req.params.id
-        const  deletedPost = Post.findByIdAndDelete(idPost);
-        if(!deletedPost) return res.status(200).json({
+        const deletedPost = Post.findByIdAndDelete(idPost);
+        if (!deletedPost) return res.status(200).json({
             status: "success",
             message: "Cannot found your id"
         })
-        return  res.status(200).json({
-                status:'Success',
-                data: deletedPost
-             });  
+        return res.status(200).json({
+            status: 'Success',
+            data: deletedPost
+        });
     } catch (error) {
         res.status(400).json({
             status: "Error",
@@ -108,28 +110,29 @@ const deletePostById = (req, res) => {
     }
 }
 // El usuario introduce el nombre del producto que decea buscar 
-const getProdutsName = async (req,res) => {
+const getProductsName = async (req, res) => {
     try {
-      const productName = req.body.productName;
-      const product = await Post.find({postName: productName});
-      res.status(200).json({
-        status: "success",
-        data: product,
-      })
+        const postName = req.body.postName;
+        const post = await Post.find({ postName: postName });
+        console.log(post)
+        res.status(200).json({
+            status: "success",
+            data: post,
+        })
     } catch (error) {
         res.status(400).json({
             status: "Error",
             message: "searching for the product",
             error: error.message
         })
-    } 
+    }
 };
 
 // El usuario introduce el nombre que decea buscar
-const getFindUser = async (req,res) => {
-    try{
+const getFindUser = async (req, res) => {
+    try {
         const findUser = req.body.findUser;
-        const user = await ProfileUser.find({userName: findUser});
+        const user = await ProfileUser.find({ userName: findUser });
         res.status(200).json({
             status: "success",
             data: user,
@@ -141,8 +144,8 @@ const getFindUser = async (req,res) => {
             error: error.message
         })
     }
-   
-};
- 
 
-module.exports = {getAllPosts, getPostById, addNewPost, updatePostById, deletePostById, getProdutsName, getFindUser}
+};
+
+
+module.exports = { getAllPosts, getPostById, addNewPost, updatePostById, deletePostById, getProductsName, getFindUser }
