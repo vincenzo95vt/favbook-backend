@@ -11,7 +11,7 @@ router.get("/users", verifyToken, getAllUsers)//Cogemos los datos de los usuario
 
 router.get("/profileUser", verifyToken, getUserDetails)
 
-router.patch("/updateUserDetais", verifyToken, updateUserData) //Modificamos los datos de usuario.(Podemos ponerlo con o sin verificacion de Admin)
+router.patch("/updateUserDetails", verifyToken, updateUserData) //Modificamos los datos de usuario.(Podemos ponerlo con o sin verificacion de Admin)
 
 router.delete("/:id", deleteUserById) //Borramos usuario mediante el id.(Aqui ponemos verifyAdmin)
 
