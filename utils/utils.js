@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const User = require("../models/profileUserSchema")
+const Users = require("../models/profileUserSchema")
 const generateToken = (payload, isRefresh) =>{
  if(isRefresh){
     return jwt.sign(payload, process.env.TOKEN_SECRET_REFRESH,{
@@ -10,7 +10,7 @@ const generateToken = (payload, isRefresh) =>{
 };
 
 const userExist = async (email) =>{
-    const user = await User.findOne({email: email}) 
-    if(user) return true    
+    const user = await Users.findOne({email: email}) 
+    return !!user;    
 }
 module.exports = {generateToken, userExist}

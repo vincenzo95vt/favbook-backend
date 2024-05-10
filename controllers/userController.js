@@ -16,7 +16,7 @@ const addNewUser = async (req, res) =>{
             lastName: lastName, 
             genre: genre})
         //En esta funcion vamos a comprobar si el usuario existe en la base de datos desde el back para mandar un mensaje al front por si esta o no. 
-        if(userExist(user.email)) return res.status(409).json({
+        if( await userExist(user.email)) return res.status(409).json({
             message: "The email is already in use",
             status: "error"
         })
@@ -44,7 +44,12 @@ const loginUser = async (req, res) =>{
                 const payload = {
                     userId: data._id,
                     email: data.email,
-                    nombre : data.name,
+                    name : data.name,
+                    lastName: data.lastName,
+                    userName: data.userName,
+                    description: data.description,
+                    age: data.age,
+                    imgProfile: data.imgProfile
                 };
                 //Aqui debajo van los tokens, cuando hagamos los middlewares  de autenticacion actualizamos codigo.
                 const token = generateToken(payload, false);
@@ -53,7 +58,7 @@ const loginUser = async (req, res) =>{
                 return res.status(200).json({
                     status: "success",
                     message: "Login successfully",
-                    data: data,
+                    data: payload,
                     token: token,
                     token_refresh: token_refresh
             })
@@ -76,6 +81,23 @@ const loginUser = async (req, res) =>{
         })
     }
 };
+
+const getUserDetails = async (req, res) =>{
+    try {
+        const userId = req.payload
+        const data = await Users.findById(userId)
+        if(!data) return res.status(400).send("No data to show")
+        return res.status(200).json({
+            status: "success",
+            data: data
+            })
+    } catch (error) {
+        res.status(400).json({
+            status: "error",
+            message: "cannot get the data requested"
+        })
+    }
+}
 
 const getAllUsers = async (req, res) =>{
     //Podriamos poner que solo puedan acceder a los Users los admins o los que tienen tokens
@@ -101,20 +123,24 @@ const getAllUsers = async (req, res) =>{
 
 const updateUserData = async (req, res) =>{
     try {
-        const idUser = req.params.userId; //Una vez que tengamos el payload y los token hay que modificar el codigo para que el id se coja desde el token.
+        const idUser = req.payload.id; 
         const {
+            imgProfile,
             name,
             lastName,
-            email,
+            userName,
+            description,
             genre,
             age
         } = req.body
         const userData = await Users.findByIdAndUpdate(idUser, {
-            name,
-            lastName,
-            email,
-            genre,
-            age
+            imgProfile:imgProfile ,
+            name:name ,
+            lastName: lastName,
+            userName: userName,
+            description: description,
+            genre: genre,
+            age: age
         })
         res.status(200).json({
             status: "success",
@@ -151,4 +177,4 @@ const deleteUserById = (req, res) =>{c
     }
 }
 
-module.exports = {addNewUser, updateUserData, getAllUsers, loginUser, deleteUserById}
+module.exports = {addNewUser, updateUserData, getAllUsers, loginUser, deleteUserById, getUserDetails}
