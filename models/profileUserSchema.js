@@ -7,7 +7,8 @@ const profileUserSchema =  new mongoose.Schema({
     },
     email:{ //Email necesario para hacer login.
         type: String,
-        require: true
+        require: true,
+        unique: true
     },
     password:{ //Contraseña que vaya a poner
         type: String,
@@ -49,7 +50,23 @@ const profileUserSchema =  new mongoose.Schema({
         type:[String],
         enum: ["admin", "user"],
         default: "user"
-    }
+    },
+    myLists: [
+        {
+            name: {
+                type: String,
+                required: true,
+            },
+            description: {
+                type: String,
+                required: true,
+            },
+            favouritePosts: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Products",
+            },
+        }
+    ]
 })
 
 const ProfileUser = mongoose.model("Users", profileUserSchema) 

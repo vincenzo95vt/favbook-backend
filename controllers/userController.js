@@ -103,14 +103,16 @@ const updateUserData = async (req, res) =>{
             lastName,
             email,
             genre,
-            age
+            age,
+            myLists
         } = req.body
         const userData = await Users.findByIdAndUpdate(idUser, {
             name,
             lastName,
             email,
             genre,
-            age
+            age,
+            myLists
         })
         res.status(200).json({
             status: "success",
