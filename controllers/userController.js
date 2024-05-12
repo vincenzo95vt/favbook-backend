@@ -49,7 +49,8 @@ const loginUser = async (req, res) =>{
                     userName: data.userName,
                     description: data.description,
                     age: data.age,
-                    imgProfile: data.imgProfile
+                    imgProfile: data.imgProfile,
+                    privacy: data.privacy
                 };
                 //Aqui debajo van los tokens, cuando hagamos los middlewares  de autenticacion actualizamos codigo.
                 const token = generateToken(payload, false);
@@ -136,7 +137,8 @@ const updateUserData = async (req, res) =>{
             userName,
             description,
             genre,
-            age
+            age,
+            privacy
         } = req.body
         
         console.log(req.body)
@@ -147,7 +149,8 @@ const updateUserData = async (req, res) =>{
             userName: userName,
             description: description,
             genre: genre,
-            age: age
+            age: age,
+            privacy: privacy
         })
         console.log(userData)
         res.status(200).json({
@@ -162,11 +165,29 @@ const updateUserData = async (req, res) =>{
     }
 }
 
-const deleteUserById = (req, res) =>{c 
-
-    //Eliminamos mediante el id del payload (Aun no lo tenemos), el usuario de la base de datos.
+const deleteUserById = (req, res) =>{
     try {
         const idUser = req.params.id
+        const  deleteUser = Post.findByIdAndDelete(idUser);
+        if(!deleteUser) return res.status(200).json({
+            status: "success",
+            message: "Cannot found the id"
+        })
+        return  res.status(200).json({
+                status:'Success',
+                data: deleteUser
+             });  
+    } catch (error) {
+        res.status(400).json({
+            status: "Error",
+            message: "Cannot delete your user",
+            error: error.message
+        })
+    }
+}
+const deleteMyUser = (req, res) =>{c 
+    try {
+        const idUser = req.payload.userId
         const  deleteUser = Post.findByIdAndDelete(idUser);
         if(!deleteUser) return res.status(200).json({
             status: "success",
@@ -185,4 +206,4 @@ const deleteUserById = (req, res) =>{c
     }
 }
 
-module.exports = {addNewUser, updateUserData, getAllUsers, loginUser, deleteUserById, getUserDetails}
+module.exports = {addNewUser, updateUserData, getAllUsers, loginUser, deleteUserById, deleteMyUser ,getUserDetails}

@@ -1,6 +1,6 @@
 const router = require("express").Router()
-const {addNewUser, updateUserData, getAllUsers, loginUser, deleteUserById, getUserDetails} = require("../controllers/userController")
-const verifyToken = require("../middlewares/auth")
+const {addNewUser, updateUserData, getAllUsers, loginUser, deleteUserById, deleteMyUser, getUserDetails} = require("../controllers/userController")
+const {verifyToken, verifyAdmin} = require("../middlewares/auth")
 
 
 router.post("/signUp", addNewUser) //Nos registramos
@@ -13,6 +13,9 @@ router.get("/profileUser", verifyToken, getUserDetails)
 
 router.patch("/updateUserDetails", verifyToken, updateUserData) //Modificamos los datos de usuario.(Podemos ponerlo con o sin verificacion de Admin)
 
-router.delete("/:id", deleteUserById) //Borramos usuario mediante el id.(Aqui ponemos verifyAdmin)
+router.delete("/deleteUser", verifyToken, deleteMyUser) //Para el usuario que quiera borrar su propia cuenta.
+
+router.delete("/:id", verifyAdmin, deleteUserById) //Borramos usuario mediante el id.(Aqui ponemos verifyAdmin)
+
 
 module.exports = router

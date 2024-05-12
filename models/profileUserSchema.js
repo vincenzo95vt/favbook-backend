@@ -46,14 +46,20 @@ const profileUserSchema =  new mongoose.Schema({
         require: true,
     }],
     genre:{//Genero que sea, si hombre o mujer.
-        type: [String],
+        type: String,
         enum: ["Hombre", "Mujer"],
         require: true
     },
     role:{ //Rol que es, pro defecto va a ser user.
-        type:[String],
+        type: String,
         enum: ["admin", "user"],
         default: "user"
+    },
+    privacy:{ //Privacidad de la cuenta.
+        type: String,
+        require: true,
+        enum: ["private", "public"],
+        default: "public"
     }
 })
 
