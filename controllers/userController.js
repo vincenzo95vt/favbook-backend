@@ -1,6 +1,7 @@
 const Users = require("../models/profileUserSchema")
 const bcrypt = require("bcrypt")
 
+
 const addNewUser = async (req, res) =>{
     try {
         const {userName, email, password, age, name, lastName, genre} = req.body
@@ -128,4 +129,22 @@ const deleteUserById = (req, res) =>{c
     }
 }
 
-module.exports = {addNewUser, updateUserData, getAllUsers, loginUser, deleteUserById}
+const getUserByName = async (req, res) => {
+    try {
+        const userName = req.params.searchValue;
+        const user = await Users.find({ userName: { $regex: userName, $options: 'i' } });
+        res.status(200).json({
+            status: "success",
+            data: user,
+        });
+    } catch (error) {
+        res.status(400).json({
+            status: "Error",
+            message: "The user was not found",
+            error: error.message
+        });
+    }
+};
+
+
+module.exports = {addNewUser, updateUserData, getAllUsers, loginUser, deleteUserById, getUserByName}
