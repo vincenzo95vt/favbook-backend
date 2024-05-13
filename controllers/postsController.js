@@ -106,4 +106,14 @@ const deletePostById = (req, res) => {
     }
 }
 
-module.exports = {getAllPosts, getPostById, addNewPost, updatePostById, deletePostById}
+const getPostByName = async (req, res) =>{
+    const postName = req.params.searchValue
+    const post = await Post.find({ postName: { $regex: postName, $options: 'i' } });
+    if(!post) return res.status(400).send("Cannot find the product")
+    res.status(200).json({
+        status: "success",
+        data: post
+    })
+}
+
+module.exports = {getAllPosts, getPostById, addNewPost, updatePostById, deletePostById, getPostByName}

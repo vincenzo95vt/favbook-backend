@@ -4,13 +4,16 @@ const {
     getPostById, 
     addNewPost, 
     updatePostById, 
-    deletePostById
+    deletePostById,
+    getPostByName
 } = require("../controllers/postsController")
 
 
 router.get("/", getAllPosts) //Recogemos todos los productos.
 
 router.get("/:id", getPostById) //Recogemos productos por ID
+
+router.get("/searchByName/:searchValue", getPostByName)
 
 router.post("/", addNewPost) //Añadimos publicaciones.
 
