@@ -21,7 +21,7 @@ const addNewUser = async (req, res) =>{
             status: "error"
         })
         user.save()
-        res.status(200).json({
+        res.status(201).json({
             status: "success",
             data: user
         })
@@ -65,6 +65,7 @@ const loginUser = async (req, res) =>{
             })
 
         }else {
+
             return res.status(401).json({
                 status: "unauthorize",
                 message:"email and password don't match"
@@ -73,7 +74,7 @@ const loginUser = async (req, res) =>{
         }  
           
     } catch (error) {
-        res.status(400).json({
+        res.status(401).json({
 
             status: "error",
 
@@ -169,7 +170,7 @@ const deleteUserById = (req, res) =>{
     try {
         const idUser = req.params.id
         const  deleteUser = Post.findByIdAndDelete(idUser);
-        if(!deleteUser) return res.status(200).json({
+        if(!deleteUser) return res.status(204).json({
             status: "success",
             message: "Cannot found the id"
         })
