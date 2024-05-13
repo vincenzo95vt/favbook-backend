@@ -4,8 +4,10 @@ const {
     getPostById, 
     addNewPost, 
     updatePostById, 
-    deletePostById
-} = require("../controllers/postsController");
+    deletePostById,
+    getPostByName
+} = require("../controllers/postsController")
+
 
 /**
  * @swagger
@@ -52,6 +54,8 @@ router.get("/", getAllPosts) //Recogemos todos los productos.
  */
 router.get("/:id", getPostById) //Recogemos productos por ID
 
+router.get("/searchByName/:searchValue", getPostByName)
+=======
 /**
  * @swagger
  * /posts:
