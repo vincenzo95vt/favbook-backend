@@ -7,7 +7,7 @@ const { post } = require("../routers/userRouters");
 const getAllPosts = async (req, res) => {
     try {
         const posts = await Post.find() //Buscamos en  la base de datos
-        if (posts.length === 0) return res.status(200).json({
+        if(posts.length === 0) return res.status(204).json({
             status: "success",
             message: "There's no Posts in your database", //Mostramos error si no encontramos nada
         })
@@ -32,7 +32,7 @@ const getPostById = async (req, res) => {
             status: "success",
             message: "There's no product with that id" //Devolvemos error si no encontramos nada con ese id.
         })
-        res.status(200).json({
+        res.status(204).json({
             status: "success",
             data: product //Devolvemos productos si encontramos
         })
@@ -47,10 +47,10 @@ const getPostById = async (req, res) => {
 
 const addNewPost = (req, res) => {
     try {
-        const { post, postName, description, comments } = req.body
-        const newPost = new Post({ post, postName, description, comments })
+        const {post, postName, description, comments, userPoster} = req.body
+        const newPost = new Post({post, postName, description, comments, userPoster})
         newPost.save()
-        return res.status(200).json({
+        return res.status(201).json({
             status: "Success",
             data: newPost
         })
@@ -109,6 +109,16 @@ const deletePostById = (req, res) => {
             error: error.message
         })
     }
+};
+
+const getPostByName = async (req, res) =>{
+    const postName = req.params.searchValue
+    const post = await Post.find({ postName: { $regex: postName, $options: 'i' } });
+    if(!post) return res.status(400).send("Cannot find the product")
+    res.status(200).json({
+        status: "success",
+        data: post
+    })
 }
 // El usuario introduce el nombre del producto que decea buscar 
 const getProductsName = async (req, res) => {
@@ -138,4 +148,4 @@ const getProductsName = async (req, res) => {
 
 
 
-module.exports = { getAllPosts, getPostById, addNewPost, updatePostById, deletePostById, getProductsName}
+module.exports = { getAllPosts, getPostById, addNewPost, updatePostById, deletePostById, getProductsName, getPostByName}

@@ -1,5 +1,8 @@
 const Users = require("../models/profileUserSchema")
 const bcrypt = require("bcrypt")
+const  jwt = require("jsonwebtoken");
+const { generateToken, userExist } = require("../utils/utils");
+
 
 
 const addNewUser = async (req, res) =>{
@@ -13,8 +16,13 @@ const addNewUser = async (req, res) =>{
             name: name, 
             lastName: lastName, 
             genre: genre})
+        //En esta funcion vamos a comprobar si el usuario existe en la base de datos desde el back para mandar un mensaje al front por si esta o no. 
+        if( await userExist(user.email)) return res.status(409).json({
+            message: "The email is already in use",
+            status: "error"
+        })
         user.save()
-        res.status(200).json({
+        res.status(201).json({
             status: "success",
             data: user
         })
@@ -25,32 +33,72 @@ const addNewUser = async (req, res) =>{
             error: error.message
         })
     }
-}
-
+};
 const loginUser = async (req, res) =>{
     //En esta funcion nos logueamos, recordad que este codigo esta hecho aun sin los middlewares, una vez hechos se modifican para que todo gire en torno a ello.
     try {
         const  {email, password} = req.body;
-        const data = await Users.findById(idUser)
+        const data = await Users.findOne({email:email})
         if(data) {
-            const validatePassword = await bcrypt.compare(password, user.password);
+            const validatePassword = await bcrypt.compare(password, data.password);
             if(validatePassword){
                 const payload = {
-                    userId: user._id,
-                    email: user.email,
-                    role: user.role
-                }
-            }
-            //Aqui debajo van los tokens, cuando hagamos los middlewares  de autenticacion actualizamos codigo.
+                    userId: data._id,
+                    email: data.email,
+                    name : data.name,
+                    lastName: data.lastName,
+                    userName: data.userName,
+                    description: data.description,
+                    age: data.age,
+                    imgProfile: data.imgProfile,
+                    privacy: data.privacy
+                };
+                //Aqui debajo van los tokens, cuando hagamos los middlewares  de autenticacion actualizamos codigo.
+                const token = generateToken(payload, false);
+                const token_refresh = generateToken(payload, true);
+
+                return res.status(200).json({
+                    status: "success",
+                    message: "Login successfully",
+                    data: payload,
+                    token: token,
+                    token_refresh: token_refresh
+            })
+
+        }else {
+
+            return res.status(401).json({
+                status: "unauthorize",
+                message:"email and password don't match"
+            })
         }
+        }  
+          
+    } catch (error) {
+        res.status(401).json({
+
+            status: "error",
+
+            message: "cannot login",
+             error: error.message
+        })
+    }
+};
+
+const getUserDetails = async (req, res) =>{
+    try {
+        const userId = req.payload.userId
+        console.log(userId)
+        const data = await Users.findById(userId)
+        if(!data) return res.status(400).send("No data to show")
         return res.status(200).json({
             status: "success",
-            message: "Login successfully"
-        })        
+            data: data
+            })
     } catch (error) {
         res.status(400).json({
             status: "error",
-            message: "cannot login"
+            message: "cannot get the data requested"
         })
     }
 }
@@ -79,21 +127,34 @@ const getAllUsers = async (req, res) =>{
 
 const updateUserData = async (req, res) =>{
     try {
-        const idUser = req.params.userId; //Una vez que tengamos el payload y los token hay que modificar el codigo para que el id se coja desde el token.
-        const {
-            name,
-            lastName,
-            email,
-            genre,
-            age
-        } = req.body
-        const userData = await Users.findByIdAndUpdate(idUser, {
-            name,
-            lastName,
-            email,
-            genre,
-            age
+        const idUser = req.payload.userId; 
+        if(!idUser) return res.status(404).json({
+            status:'error',
+            message:'No users with that id'
         })
+        const {
+            imgProfile,
+            name,
+            lastName,
+            userName,
+            description,
+            genre,
+            age,
+            privacy
+        } = req.body
+        
+        console.log(req.body)
+        const userData = await Users.findByIdAndUpdate(idUser, {
+            imgProfile:imgProfile ,
+            name:name ,
+            lastName: lastName,
+            userName: userName,
+            description: description,
+            genre: genre,
+            age: age,
+            privacy: privacy
+        })
+        console.log(userData)
         res.status(200).json({
             status: "success",
             data: userData
@@ -106,11 +167,29 @@ const updateUserData = async (req, res) =>{
     }
 }
 
-const deleteUserById = (req, res) =>{c 
-
-    //Eliminamos mediante el id del payload (Aun no lo tenemos), el usuario de la base de datos.
+const deleteUserById = (req, res) =>{
     try {
         const idUser = req.params.id
+        const  deleteUser = Post.findByIdAndDelete(idUser);
+        if(!deleteUser) return res.status(204).json({
+            status: "success",
+            message: "Cannot found the id"
+        })
+        return  res.status(200).json({
+                status:'Success',
+                data: deleteUser
+             });  
+    } catch (error) {
+        res.status(400).json({
+            status: "Error",
+            message: "Cannot delete your user",
+            error: error.message
+        })
+    }
+}
+const deleteMyUser = (req, res) =>{c 
+    try {
+        const idUser = req.payload.userId
         const  deleteUser = Post.findByIdAndDelete(idUser);
         if(!deleteUser) return res.status(200).json({
             status: "success",
@@ -147,4 +226,4 @@ const getUserByName = async (req, res) => {
 };
 
 
-module.exports = {addNewUser, updateUserData, getAllUsers, loginUser, deleteUserById, getUserByName}
+module.exports = {addNewUser, updateUserData, getAllUsers, loginUser, deleteUserById, getUserByName, deleteMyUser ,getUserDetails}
