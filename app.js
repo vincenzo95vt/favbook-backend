@@ -1,5 +1,7 @@
 
 const { error } = require("console")
+// Con esta configuración, el servidor permitirá todas las solicitudes desde cualquier origen
+const cors = require('cors');
 //Instalamos express para trabajar en el back
 const express = require("express")
 //Llamamos a cors
@@ -15,6 +17,7 @@ const mongoose = require("mongoose")
 //Definimos constante app para levantar servidor con  express
 const app = express()
 app.use(express.json())
+app.use(cors())
 //Instalamos dotenv para guardar claves como Tokens, Secret tokens y Url de mongodb con su contraseña
 require("dotenv").config()
 //Declaramos el cors, para conectar el back con el front:
@@ -47,7 +50,6 @@ db.on("disconnected", (error) => {
 })
 
 app.use("/user", userRouters)
-
 app.use("/posts", postRouters)
 app.use("/api-doc", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 //Aqui lanzamos un app.listen para definir nuestra url para seguir el link desde la consola.
