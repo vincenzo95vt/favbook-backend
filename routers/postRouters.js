@@ -5,9 +5,10 @@ const {
     addNewPost, 
     updatePostById, 
     deletePostById,
-    getPostByName
+    getPostByName,
+    addNewReview
 } = require("../controllers/postsController")
-
+const {verifyToken} = require("../middlewares/auth")
 
 /**
  * @swagger
@@ -54,8 +55,7 @@ router.get("/", getAllPosts) //Recogemos todos los productos.
  */
 router.get("/:id", getPostById) //Recogemos productos por ID
 
-router.get("/searchByName/:searchValue", getPostByName)
-=======
+router.get("/searchByName/:searchValue", verifyToken, getPostByName)
 /**
  * @swagger
  * /posts:
@@ -105,7 +105,7 @@ router.get("/searchByName/:searchValue", getPostByName)
  *         description: Ha fallado la petición de obtener las imágenes
  */
 
-router.post("/", addNewPost) //Añadimos publicaciones.
+router.post("/", verifyToken, addNewPost) //Añadimos publicaciones.
 
 /**
  * @swagger
@@ -153,7 +153,7 @@ router.post("/", addNewPost) //Añadimos publicaciones.
  *         description: No se puede actualizar la foto.
  */
 
-router.patch("/:id", updatePostById) //Actualizamos productos.
+router.patch("/:id", verifyToken, updatePostById) //Actualizamos productos.
 
 /**
  * @swagger
@@ -177,5 +177,7 @@ router.patch("/:id", updatePostById) //Actualizamos productos.
  *         description: No se puede eliminar la foto.
  */
 router.delete("/:id", deletePostById) //Eliminamos producto basandonos en el ID.
+
+router.post("/addNewReview/:id", verifyToken, addNewReview)
 
 module.exports = router

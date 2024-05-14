@@ -10,7 +10,7 @@ const getAllPosts = async (req, res) => {
         })
         res.status(200).json({
             status:"sucess",
-            data: posts //Mostramos Postos si encontramos algo en la base de datos.
+            data: posts //Mostramos Posts si encontramos algo en la base de datos.
         })
     } catch (error) {
         res.status(400).json({
@@ -44,8 +44,15 @@ const getPostById = async (req, res) => {
 
 const addNewPost = (req, res) =>{
     try {
-        const {post, postName, description, comments, userPoster} = req.body
-        const newPost = new Post({post, postName, description, comments, userPoster})
+        const userId = req.payload.userId
+        const {post, postName, description, comments} = req.body
+        const newPost = new Post({
+            post: post,
+             postName: postName,
+             description: description,
+             comments: comments, 
+             userPoster: userId
+            })
         newPost.save()
         return res.status(201).json({
             status: "Success",
@@ -116,4 +123,30 @@ const getPostByName = async (req, res) =>{
     })
 }
 
-module.exports = {getAllPosts, getPostById, addNewPost, updatePostById, deletePostById, getPostByName}
+const addNewReview = async (req, res) => {
+    try {
+        const userId = req.payload.userId
+        const postId = req.params.id
+        const comment = req.body.comment
+        const data = await Post.findById(postId)
+        if(!data) return res.status(404).send("cannot find the post requested")
+            console.log(data.comments)
+        data.comments.push({
+            usuario: userId,
+            content: comment
+        })
+        data.save()
+        res.status(200).json({
+            status:"succes",
+            message: "comment added succesfully"
+        })
+    } catch (error) {
+        res.status(400).json({
+            status: "Error",
+            message: "Cannot add your comment",
+            error: error.message
+        })
+    }
+}
+
+module.exports = {getAllPosts, getPostById, addNewPost, updatePostById, deletePostById, getPostByName, addNewReview}
