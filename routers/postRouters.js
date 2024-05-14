@@ -63,7 +63,6 @@ router.post("/", addNewPost) //Incluimos productos.
 router.get("/:id", getPostById) //Recogemos productos por ID
 
 router.get("/searchByName/:searchValue", getPostByName)
-=======
 /**
  * @swagger
  * /posts:

@@ -5,7 +5,6 @@ const cors = require('cors');
 //Instalamos express para trabajar en el back
 const express = require("express")
 //Llamamos a cors
-const cors = require("cors")
 //Definimos nuestro puerto en Localhost
 const PORT = 4000
 //importacion de la libreria de swagger una, una para la parte visual y la otra la parte de interfaz
