@@ -62,17 +62,17 @@ const profileUserSchema =  new mongoose.Schema({
         enum: ["private", "public"],
         default: "public"
     },
-    myLists: [
+    myLists: [ //Listas del usuario
         {
-            name: {
+            name: { //Nombre de la lista
                 type: String,
                 required: true,
             },
-            description: {
+            description: { //Descripcion de la lista
                 type: String,
                 required: true,
             },
-            favouritePosts: {
+            favouritePosts: { //Productos favoritos del usuario
                 type: mongoose.Schema.Types.ObjectId,
                 ref: "Products",
             },
