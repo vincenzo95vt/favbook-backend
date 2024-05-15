@@ -4,6 +4,7 @@ const { error } = require("console")
 const cors = require('cors');
 //Instalamos express para trabajar en el back
 const express = require("express")
+//Llamamos a cors
 //Definimos nuestro puerto en Localhost
 const PORT = 4000
 //Instalamos mongoose para conectar a mongoDB
@@ -42,7 +43,11 @@ db.on("disconnected", (error) => {
 
 app.use("/user", userRouters)
 app.use("/posts", postRouters)
+<<<<<<<<< Temporary merge branch 1
 
+=========
+app.use("/api-doc", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+>>>>>>>>> Temporary merge branch 2
 //Aqui lanzamos un app.listen para definir nuestra url para seguir el link desde la consola.
 app.listen(PORT, () => {
         console.log(`Server running in http://localhost:${PORT}`)
