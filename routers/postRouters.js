@@ -1,11 +1,14 @@
 const router = require("express").Router();
 const {
-    getAllPosts, 
-    getPostById, 
-    addNewPost, 
-    updatePostById, 
-    deletePostById
-} = require("../controllers/postsController");
+    getAllPosts,
+    getPostById,
+    addNewPost,
+    updatePostById,
+    deletePostById,
+    getProductsName,
+    getPostByName 
+} = require("../controllers/postsController")
+
 
 /**
  * @swagger
@@ -26,6 +29,13 @@ const {
 
 router.get("/", getAllPosts) //Recogemos todos los productos.
 //para obtenerlos por parametros {id}
+
+router.get("/getProducts/:searchValue", getProductsName); //buscar productos por nombre.
+
+router.get("/:id", getPostById) //Recogemos productos por ID
+
+
+router.post("/", addNewPost) //Incluimos productos.
 
 /**
  * @swagger
@@ -52,6 +62,7 @@ router.get("/", getAllPosts) //Recogemos todos los productos.
  */
 router.get("/:id", getPostById) //Recogemos productos por ID
 
+router.get("/searchByName/:searchValue", getPostByName)
 /**
  * @swagger
  * /posts:

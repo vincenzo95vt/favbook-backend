@@ -23,5 +23,19 @@ const verifyToken = (req,res,next) => {
     }
 };
 
+const verifyAdmin = (req, res, next) => {
+    try {
+        const payload = req.payload
+        if(!payload.role || payload.role === "user") return res.status(402).send("No estas autorizado")
+        req.payload = payload;
+        next()
+    } catch (error) {
+        res.status(400).json({
+            status: "error",
+            data: error.message
+        })
+    }
+}
 
-module.exports = verifyToken;
+
+module.exports = {verifyToken, verifyAdmin};

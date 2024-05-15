@@ -5,6 +5,11 @@ const profileUserSchema =  new mongoose.Schema({
         type: String,
         require: true
     },
+    imgProfile:{
+        type: String,
+        require: true,
+        default: "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+    },
     email:{ //Email necesario para hacer login.
         type: String,
         require: true,
@@ -42,14 +47,20 @@ const profileUserSchema =  new mongoose.Schema({
         require: true,
     }],
     genre:{//Genero que sea, si hombre o mujer.
-        type: [String],
+        type: String,
         enum: ["Hombre", "Mujer"],
         require: true
     },
     role:{ //Rol que es, pro defecto va a ser user.
-        type:[String],
+        type: String,
         enum: ["admin", "user"],
         default: "user"
+    },
+    privacy:{ //Privacidad de la cuenta.
+        type: String,
+        require: true,
+        enum: ["private", "public"],
+        default: "public"
     },
     myLists: [
         {
@@ -69,6 +80,6 @@ const profileUserSchema =  new mongoose.Schema({
     ]
 })
 
-const ProfileUser = mongoose.model("Users", profileUserSchema) 
+const Users = mongoose.model("Users", profileUserSchema) 
 
-module.exports = ProfileUser; //Exportamos modelo.
+module.exports = Users; //Exportamos modelo.
