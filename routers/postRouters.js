@@ -53,7 +53,7 @@ router.get("/", getAllPosts) //Recogemos todos los productos.
  * 
  * 
  */
-router.get("/:id", getPostById) //Recogemos productos por ID
+router.get("/:id", verifyToken, getPostById) //Recogemos productos por ID
 
 router.get("/searchByName/:searchValue", verifyToken, getPostByName)
 /**

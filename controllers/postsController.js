@@ -24,14 +24,15 @@ const getAllPosts = async (req, res) => {
 const getPostById = async (req, res) => {
     try {
         const idPost = req.params.id //recogemos el request del body basandonos en el id.
-        const product = await Product.findById(idPost) //Los mismo que en el getAllProducts, pero solamente buscandolo por el id 
-        if(!product) return res.status(200).json({
+        const post = await Post.findById(idPost) //Los mismo que en el getAllposts, pero solamente buscandolo por el id 
+        if(!post) return res.status(200).json({
             status: "success",
-            message: "There's no product with that id" //Devolvemos error si no encontramos nada con ese id.
+            message: "There's no post with that id" //Devolvemos error si no encontramos nada con ese id.
         })
-        res.status(204).json({
+        console.log(post)
+        res.status(200).json({
             status: "success",
-            data: product //Devolvemos productos si encontramos
+            data: post //Devolvemos productos si encontramos
         })
     } catch (error) {
         res.status(400).json({
