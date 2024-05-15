@@ -1,4 +1,7 @@
-const Post = require("../models/postsModel")
+const { error } = require("console");
+const Post = require("../models/postsModel");
+const { post } = require("../routers/userRouters");
+
 
 
 const getAllPosts = async (req, res) => {
@@ -39,11 +42,11 @@ const getPostById = async (req, res) => {
             status: "Error",
             message: "Cannot get the photo", //Si ha habido algun error lo mostramos en un res.status(error)
             error: error.message
-        }) 
+        })
     }
 }
 
-const addNewPost = (req, res) =>{
+const addNewPost = (req, res) => {
     try {
         const userId = req.payload.userId
         const {post, postName, description, comments} = req.body
@@ -72,16 +75,18 @@ const addNewPost = (req, res) =>{
 const updatePostById = async (req, res) => {
     try {
         const postId = req.params.id
-        const {post, postName, description, comments, favourites} = req.body;
-        const dataModified = await Post.findByIdAndUpdate({postId}, {$set:{
-            post: post,
-            postName: postName, 
-            description: description, 
-            comments: comments, 
-            favourites: favourites
-        }})
+        const { post, postName, description, comments, favourites } = req.body;
+        const dataModified = await Post.findByIdAndUpdate({ postId }, {
+            $set: {
+                post: post,
+                postName: postName,
+                description: description,
+                comments: comments,
+                favourites: favourites
+            }
+        })
         return res.status(200).json({
-            status:"Success",
+            status: "Success",
             data: dataModified
         })
     } catch (error) {
@@ -96,15 +101,15 @@ const updatePostById = async (req, res) => {
 const deletePostById = (req, res) => {
     try {
         const idPost = req.params.id
-        const  deletedPost = Post.findByIdAndDelete(idPost);
-        if(!deletedPost) return res.status(200).json({
+        const deletedPost = Post.findByIdAndDelete(idPost);
+        if (!deletedPost) return res.status(200).json({
             status: "success",
             message: "Cannot found your id"
         })
-        return  res.status(200).json({
-                status:'Success',
-                data: deletedPost
-             });  
+        return res.status(200).json({
+            status: 'Success',
+            data: deletedPost
+        });
     } catch (error) {
         res.status(400).json({
             status: "Error",
@@ -123,6 +128,31 @@ const getPostByName = async (req, res) =>{
         data: post
     })
 }
+// El usuario introduce el nombre del producto que decea buscar 
+const getProductsName = async (req, res) => {
+    try {
+        const postName = req.params.searchValue;
+        const post = await Post.find({ postName: { $regex: postName, $options: 'i' } });
+        console.log(post)
+        if(!post){
+            res.status(404).json({
+                status:"error",
+                message:"cannot search the product",
+                error:error.message
+            })
+        }
+        res.status(200).json({
+            status: "success",
+            data: post,
+        })
+    } catch (error) {
+        res.status(400).json({
+            status: "Error",
+            message: "searching for the product",
+            error: error.message
+        })
+    }
+};
 
 const addNewReview = async (req, res) => {
     try {
@@ -150,4 +180,4 @@ const addNewReview = async (req, res) => {
     }
 }
 
-module.exports = {getAllPosts, getPostById, addNewPost, updatePostById, deletePostById, getPostByName, addNewReview}
+module.exports = { getAllPosts, getPostById, addNewPost, updatePostById, deletePostById, getProductsName, getPostByName, addNewReview}

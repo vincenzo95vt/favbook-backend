@@ -1,5 +1,5 @@
 const router = require("express").Router()
-const {addNewUser, updateUserData, getAllUsers, loginUser, deleteUserById, deleteMyUser, getUserDetails} = require("../controllers/userController")
+const {addNewUser, updateUserData, getAllUsers, loginUser, deleteUserById, getUserByName, deleteMyUser, getUserDetails} = require("../controllers/userController")
 const {verifyToken, verifyAdmin} = require("../middlewares/auth")
 
 /**
@@ -101,6 +101,10 @@ router.post("/login", loginUser); //Nos logueamos
 router.get("/users", verifyToken, getAllUsers); //Cogemos los datos de los usuarios.
 
 router.get("/users", verifyToken, getAllUsers) //Cogemos los datos de los usuarios.
+
+router.get("/getuser/:searchValue", getUserByName); // buscar usuarios por su nombre. 
+
+router.patch("/:id", updateUserData) //Modificamos los datos de usuario.(Podemos ponerlo con o sin verificacion de Admin)
 
 router.get("/profileUser", verifyToken, getUserDetails) 
 

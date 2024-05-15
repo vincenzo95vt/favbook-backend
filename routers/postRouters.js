@@ -1,11 +1,12 @@
 const router = require("express").Router();
 const {
-    getAllPosts, 
-    getPostById, 
-    addNewPost, 
-    updatePostById, 
+    getAllPosts,
+    getPostById,
+    addNewPost,
+    updatePostById,
     deletePostById,
-    getPostByName,
+    getProductsName,
+    getPostByName ,
     addNewReview
 } = require("../controllers/postsController")
 const {verifyToken} = require("../middlewares/auth")
@@ -29,6 +30,13 @@ const {verifyToken} = require("../middlewares/auth")
 
 router.get("/", getAllPosts) //Recogemos todos los productos.
 //para obtenerlos por parametros {id}
+
+router.get("/getProducts/:searchValue", getProductsName); //buscar productos por nombre.
+
+router.get("/:id", getPostById) //Recogemos productos por ID
+
+
+router.post("/", addNewPost) //Incluimos productos.
 
 /**
  * @swagger
