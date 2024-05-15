@@ -104,7 +104,7 @@ router.get("/users", verifyToken, getAllUsers) //Cogemos los datos de los usuari
 
 router.get("/getuser/:searchValue", getUserByName); // buscar usuarios por su nombre. 
 
-router.patch("/:id", updateUserData) //Modificamos los datos de usuario.(Podemos ponerlo con o sin verificacion de Admin)
+router.patch("/:id", verifyToken, updateUserData) //Modificamos los datos de usuario.(Podemos ponerlo con o sin verificacion de Admin)
 
 router.get("/profileUser", verifyToken, getUserDetails) 
 
