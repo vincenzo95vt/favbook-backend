@@ -72,10 +72,12 @@ const profileUserSchema =  new mongoose.Schema({
                 type: String,
                 required: true,
             },
-            favouritePosts: { //Productos favoritos del usuario
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "Products",
-            },
+            favouritePosts: [
+                { //Productos favoritos del usuario
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: "Products",
+                }
+            ],
         }
     ]
 })
