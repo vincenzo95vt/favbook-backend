@@ -12,8 +12,8 @@ const getAllPosts = async (req, res) => {
             message: "There's no Posts in your database", //Mostramos error si no encontramos nada
         })
         res.status(200).json({
-            status: "sucess",
-            data: posts //Mostramos Postos si encontramos algo en la base de datos.
+            status:"sucess",
+            data: posts //Mostramos Posts si encontramos algo en la base de datos.
         })
     } catch (error) {
         res.status(400).json({
@@ -27,14 +27,15 @@ const getAllPosts = async (req, res) => {
 const getPostById = async (req, res) => {
     try {
         const idPost = req.params.id //recogemos el request del body basandonos en el id.
-        const product = await Product.findById(idPost) //Los mismo que en el getAllProducts, pero solamente buscandolo por el id 
-        if (!product) return res.status(200).json({
+        const post = await Post.findById(idPost) //Los mismo que en el getAllposts, pero solamente buscandolo por el id 
+        if(!post) return res.status(200).json({
             status: "success",
-            message: "There's no product with that id" //Devolvemos error si no encontramos nada con ese id.
+            message: "There's no post with that id" //Devolvemos error si no encontramos nada con ese id.
         })
-        res.status(204).json({
+        console.log(post)
+        res.status(200).json({
             status: "success",
-            data: product //Devolvemos productos si encontramos
+            data: post //Devolvemos productos si encontramos
         })
     } catch (error) {
         res.status(400).json({
@@ -47,8 +48,15 @@ const getPostById = async (req, res) => {
 
 const addNewPost = (req, res) => {
     try {
-        const {post, postName, description, comments, userPoster} = req.body
-        const newPost = new Post({post, postName, description, comments, userPoster})
+        const userId = req.payload.userId
+        const {post, postName, description, comments} = req.body
+        const newPost = new Post({
+            post: post,
+             postName: postName,
+             description: description,
+             comments: comments, 
+             userPoster: userId
+            })
         newPost.save()
         return res.status(201).json({
             status: "Success",
@@ -132,7 +140,7 @@ const getProductsName = async (req, res) => {
                 message:"cannot search the product",
                 error:error.message
             })
-        }
+        }   
         res.status(200).json({
             status: "success",
             data: post,
@@ -146,6 +154,30 @@ const getProductsName = async (req, res) => {
     }
 };
 
+const addNewReview = async (req, res) => {
+    try {
+        const userId = req.payload.userId
+        const postId = req.params.id
+        const comment = req.body.comment
+        const data = await Post.findById(postId)
+        if(!data) return res.status(404).send("cannot find the post requested")
+            console.log(data.comments)
+        data.comments.push({
+            usuario: userId,
+            content: comment
+        })
+        data.save()
+        res.status(200).json({
+            status:"succes",
+            message: "comment added succesfully"
+        })
+    } catch (error) {
+        res.status(400).json({
+            status: "Error",
+            message: "Cannot add your comment",
+            error: error.message
+        })
+    }
+}
 
-
-module.exports = { getAllPosts, getPostById, addNewPost, updatePostById, deletePostById, getProductsName, getPostByName}
+module.exports = { getAllPosts, getPostById, addNewPost, updatePostById, deletePostById, getProductsName, getPostByName, addNewReview}

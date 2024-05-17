@@ -56,7 +56,7 @@ const loginUser = async (req, res) =>{
                 //Aqui debajo van los tokens, cuando hagamos los middlewares  de autenticacion actualizamos codigo.
                 const token = generateToken(payload, false);
                 const token_refresh = generateToken(payload, true);
-
+                console.log(payload)
                 return res.status(200).json({
                     status: "success",
                     message: "Login successfully",
@@ -64,7 +64,7 @@ const loginUser = async (req, res) =>{
                     token: token,
                     token_refresh: token_refresh
             })
-
+            
         }else {
 
             return res.status(401).json({
