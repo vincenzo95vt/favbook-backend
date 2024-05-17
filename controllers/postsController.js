@@ -140,7 +140,7 @@ const getProductsName = async (req, res) => {
                 message:"cannot search the product",
                 error:error.message
             })
-        }
+        }   
         res.status(200).json({
             status: "success",
             data: post,
