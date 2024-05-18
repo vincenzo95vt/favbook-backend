@@ -32,7 +32,6 @@ const getPostById = async (req, res) => {
             status: "success",
             message: "There's no post with that id" //Devolvemos error si no encontramos nada con ese id.
         })
-        console.log(post)
         res.status(200).json({
             status: "success",
             data: post //Devolvemos productos si encontramos
@@ -133,7 +132,6 @@ const getProductsName = async (req, res) => {
     try {
         const postName = req.params.searchValue;
         const post = await Post.find({ postName: { $regex: postName, $options: 'i' } });
-        console.log(post)
         if(!post){
             res.status(404).json({
                 status:"error",
@@ -147,7 +145,7 @@ const getProductsName = async (req, res) => {
         })
     } catch (error) {
         res.status(400).json({
-            status: "Error",
+            status: "error",
             message: "searching for the product",
             error: error.message
         })
@@ -159,9 +157,9 @@ const addNewReview = async (req, res) => {
         const userId = req.payload.userId
         const postId = req.params.id
         const comment = req.body.comment
+        console.log(comment)
         const data = await Post.findById(postId)
         if(!data) return res.status(404).send("cannot find the post requested")
-            console.log(data.comments)
         data.comments.push({
             usuario: userId,
             content: comment
