@@ -163,6 +163,43 @@ const updateUserData = async (req, res) =>{
     }
 }
 
+const refreshToken = (req, res) => {
+    try {
+        const payload = req.payload;
+        if(!payload) return res.status(401).json({
+            error: "Acceso denegado"
+        })
+        const user = {
+            userId: payload._id,
+            email: payload.email,
+            name : payload.name,
+            lastName: payload.lastName,
+            userName: payload.userName,
+            description: payload.description,
+            age: payload.age,
+            imgProfile: payload.imgProfile,
+            privacy: payload.privacy
+        }
+        const token = generateToken(user, false)
+        const refresh_token = generateToken(user, true)
+
+        res.status(200).json({
+            status: "success",
+            data: {
+                token,
+                refresh_token
+            }
+        })
+    } catch (error) {
+        res.status(400).json({
+            status: "Error",
+            message: "No se ha podido refrescar el token",
+            error: error.message,
+        })
+    }
+}
+
+
 const deleteUserById = (req, res) =>{
     try {
         const idUser = req.params.id
@@ -222,4 +259,4 @@ const getUserByName = async (req, res) => {
 };
 
 
-module.exports = {addNewUser, updateUserData, getAllUsers, loginUser, deleteUserById, getUserByName, deleteMyUser ,getUserDetails}
+module.exports = {addNewUser, updateUserData, getAllUsers, loginUser, deleteUserById, getUserByName, deleteMyUser ,getUserDetails, refreshToken}
