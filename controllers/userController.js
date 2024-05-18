@@ -2,6 +2,7 @@ const Users = require("../models/profileUserSchema")
 const bcrypt = require("bcrypt")
 const  jwt = require("jsonwebtoken");
 const { generateToken, userExist } = require("../utils/utils");
+const { response } = require("express");
 
 
 
@@ -259,4 +260,38 @@ const getUserByName = async (req, res) => {
 };
 
 
-module.exports = {addNewUser, updateUserData, getAllUsers, loginUser, deleteUserById, getUserByName, deleteMyUser ,getUserDetails, refreshToken}
+const getSearchedUserDetails = async (req, res) => {
+    try {
+        const userId = req.params.id
+        const userData = await  Users.findById(userId).populate("followers").populate("following");
+        if(!userData) return res.status(404).send("No users with that id")
+
+        const userFollowersCount = userData.followers ? userData.followers.length : 0;
+        const userFollowingCount = userData.following ? userData.following.length : 0;
+        const userLists = userData.myLists ? userData.myLists.length : 0;
+
+
+        const responseData = {
+            ...userData.toObject(),
+            followersCount: userFollowersCount,
+            followingCount: userFollowingCount,
+            lists: userLists
+        };
+        
+        res.status(200).json({
+            status: "success",
+            data: responseData,
+
+        })
+    } catch (error) {
+        res.status(400).json({
+            status: "Error",
+            message: "Cannot provide the details of the user requested",
+            error: error.message
+        });
+    }
+}
+
+
+
+module.exports = {addNewUser, updateUserData, getAllUsers, loginUser, deleteUserById, getUserByName, deleteMyUser ,getUserDetails, refreshToken, getSearchedUserDetails}
