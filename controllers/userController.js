@@ -2,16 +2,19 @@ const Users = require("../models/profileUserSchema")
 const bcrypt = require("bcrypt")
 const  jwt = require("jsonwebtoken");
 const { generateToken, userExist } = require("../utils/utils");
+const { response } = require("express");
+const { error } = require("console");
 
 
 
 const addNewUser = async (req, res) =>{
     try {
-        const {userName, email, password, age, name, lastName, genre} = req.body
+        const {userName, email, password, description, age, name, lastName, genre} = req.body
         const user = await new Users({
             userName: userName, 
             email: email, 
             password: await bcrypt.hash(password,10), 
+            description: description,
             age: age, 
             name: name, 
             lastName: lastName, 
@@ -56,7 +59,6 @@ const loginUser = async (req, res) =>{
                 //Aqui debajo van los tokens, cuando hagamos los middlewares  de autenticacion actualizamos codigo.
                 const token = generateToken(payload, false);
                 const token_refresh = generateToken(payload, true);
-
                 return res.status(200).json({
                     status: "success",
                     message: "Login successfully",
@@ -64,7 +66,7 @@ const loginUser = async (req, res) =>{
                     token: token,
                     token_refresh: token_refresh
             })
-
+            
         }else {
 
             return res.status(401).json({
@@ -88,7 +90,6 @@ const loginUser = async (req, res) =>{
 const getUserDetails = async (req, res) =>{
     try {
         const userId = req.payload.userId
-        console.log(userId)
         const data = await Users.findById(userId)
         if(!data) return res.status(400).send("No data to show")
         return res.status(200).json({
@@ -140,10 +141,10 @@ const updateUserData = async (req, res) =>{
             description,
             genre,
             age,
-            privacy
+            privacy,
+            myLists
         } = req.body
         
-        console.log(req.body)
         const userData = await Users.findByIdAndUpdate(idUser, {
             imgProfile:imgProfile ,
             name:name ,
@@ -152,9 +153,9 @@ const updateUserData = async (req, res) =>{
             description: description,
             genre: genre,
             age: age,
-            privacy: privacy
+            privacy: privacy,
+            myLists: myLists
         })
-        console.log(userData)
         res.status(200).json({
             status: "success",
             data: userData
@@ -166,6 +167,43 @@ const updateUserData = async (req, res) =>{
         })
     }
 }
+
+const refreshToken = (req, res) => {
+    try {
+        const payload = req.payload;
+        if(!payload) return res.status(401).json({
+            error: "Acceso denegado"
+        })
+        const user = {
+            userId: payload._id,
+            email: payload.email,
+            name : payload.name,
+            lastName: payload.lastName,
+            userName: payload.userName,
+            description: payload.description,
+            age: payload.age,
+            imgProfile: payload.imgProfile,
+            privacy: payload.privacy
+        }
+        const token = generateToken(user, false)
+        const refresh_token = generateToken(user, true)
+
+        res.status(200).json({
+            status: "success",
+            data: {
+                token,
+                refresh_token
+            }
+        })
+    } catch (error) {
+        res.status(400).json({
+            status: "Error",
+            message: "No se ha podido refrescar el token",
+            error: error.message,
+        })
+    }
+}
+
 
 const deleteUserById = (req, res) =>{
     try {
@@ -226,4 +264,116 @@ const getUserByName = async (req, res) => {
 };
 
 
-module.exports = {addNewUser, updateUserData, getAllUsers, loginUser, deleteUserById, getUserByName, deleteMyUser ,getUserDetails}
+const getSearchedUserDetails = async (req, res) => {
+    try {
+        const userId = req.params.id
+        const userData = await  Users.findById(userId).populate("followers").populate("following");
+        if(!userData) return res.status(404).send("No users with that id")
+
+        const userFollowersCount = userData.followers ? userData.followers.length : 0;
+        const userFollowingCount = userData.following ? userData.following.length : 0;
+        const userLists = userData.myLists ? userData.myLists.length : 0;
+
+
+        const responseData = {
+            ...userData.toObject(),
+            followersCount: userFollowersCount,
+            followingCount: userFollowingCount,
+            lists: userLists
+        };
+        
+        res.status(200).json({
+            status: "success",
+            data: responseData,
+
+        })
+    } catch (error) {
+        res.status(400).json({
+            status: "Error",
+            message: "Cannot provide the details of the user requested",
+            error: error.message
+        });
+    }
+}
+
+
+const getUserCreatorName = async (req, res) => {
+    try {
+        const userId = req.params.id
+        const user = await Users.findById(userId)
+        if(!user) return res.status(404).send("No users with that id")
+            console.log(user.userName)
+            res.status(200).json({
+            status: "success",
+            data: user.userName,
+            })
+    } catch (error) {
+        res.status(400).json({
+            status: "Error",
+            message: "Cannot provide the name of the user requested",
+            error: error.message
+        });
+    }
+}
+
+const createList = async (req,res) => {
+    try {
+        const userId = req.payload.userId
+        const { name, description } = req.body
+        const data = await Users.findById(userId)
+        console.log(name)
+        console.log(description)
+
+        if(!data) return res.status(404).send("cannot find the user")
+        data.myLists.push({
+            name: name,
+            description: description
+        })
+        console.log("he pasado el if")
+        await data.save()
+        console.log(data)
+
+        res.status(200).json({
+            status:"success",
+            message: "List created succesfully",
+        })      
+
+    } catch (error) {
+        res.status(400).json({
+            status: "Error",
+            message: "Cannot create the list",
+            error: error.message
+        });
+    }
+}
+
+const addPostToList = async (req,res) => {
+    try {
+        const userId = req.payload.userId
+        const listId = req.params.id
+        const postId = req.body.postId
+
+        const data = await Users.findById(userId)
+        console.log(data)
+        const list = data.myLists.find(list => list._id == listId)
+        console.log(list)
+        list.favouritePosts.push(postId)
+        await data.save()
+        
+        res.status(200).json({
+            status:"success",
+            message: "Post added successfully to the list",
+        }) 
+
+    } catch (error) {
+        res.status(400).json({
+            status: "Error",
+            message: "Cannot push the post",
+            error: error.message
+        });
+    }
+}
+
+
+
+module.exports = {addNewUser, updateUserData, getAllUsers, loginUser, deleteUserById, getUserByName, deleteMyUser ,getUserDetails, refreshToken, getSearchedUserDetails, getUserCreatorName, createList, addPostToList}

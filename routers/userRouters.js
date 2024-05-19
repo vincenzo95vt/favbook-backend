@@ -1,5 +1,6 @@
 const router = require("express").Router()
-const {addNewUser, updateUserData, getAllUsers, loginUser, deleteUserById, getUserByName, deleteMyUser, getUserDetails} = require("../controllers/userController")
+const { verify } = require("crypto");
+const {addNewUser, updateUserData, getAllUsers, loginUser, getSearchedUserDetails, deleteUserById, getUserByName, deleteMyUser, getUserDetails, refreshToken, getUserCreatorName, createList, addPostToList} = require("../controllers/userController")
 const {verifyToken, verifyAdmin} = require("../middlewares/auth")
 
 /**
@@ -100,19 +101,27 @@ router.post("/login", loginUser); //Nos logueamos
  */
 router.get("/users", verifyToken, getAllUsers); //Cogemos los datos de los usuarios.
 
-router.get("/users", verifyToken, getAllUsers) //Cogemos los datos de los usuarios.
-
 router.get("/getuser/:searchValue", getUserByName); // buscar usuarios por su nombre. 
 
-router.patch("/:id", updateUserData) //Modificamos los datos de usuario.(Podemos ponerlo con o sin verificacion de Admin)
+router.patch("/:id", verifyToken, updateUserData) //Modificamos los datos de usuario.(Podemos ponerlo con o sin verificacion de Admin)
+
+router.get("/getUserDetails/:id", verifyToken, getSearchedUserDetails)
+
+router.get("/getName/:id", verifyToken, getUserCreatorName)
 
 router.get("/profileUser", verifyToken, getUserDetails) 
+
+router.post("/refreshToken", verifyToken, refreshToken)
 
 router.patch("/updateUserDetails", verifyToken, updateUserData) //Modificamos los datos de usuario.(Podemos ponerlo con o sin verificacion de Admin)
 
 router.delete("/deleteUser", verifyToken, deleteMyUser) //Para el usuario que quiera borrar su propia cuenta.
 
 router.delete("/:id", verifyAdmin, deleteUserById) //Borramos usuario mediante el id.(Aqui ponemos verifyAdmin)
+
+router.post("/createList", verifyToken, createList)
+
+router.post("/addPostToList/:id", verifyToken, addPostToList)
 
 
 module.exports = router
