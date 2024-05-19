@@ -1,6 +1,6 @@
 const router = require("express").Router()
 const { verify } = require("crypto");
-const {addNewUser, updateUserData, getAllUsers, loginUser, getSearchedUserDetails, deleteUserById, getUserByName, deleteMyUser, getUserDetails, refreshToken, getUserCreatorName} = require("../controllers/userController")
+const {addNewUser, updateUserData, getAllUsers, loginUser, getSearchedUserDetails, deleteUserById, getUserByName, deleteMyUser, getUserDetails, refreshToken, getUserCreatorName, createList} = require("../controllers/userController")
 const {verifyToken, verifyAdmin} = require("../middlewares/auth")
 
 /**
@@ -118,6 +118,8 @@ router.patch("/updateUserDetails", verifyToken, updateUserData) //Modificamos lo
 router.delete("/deleteUser", verifyToken, deleteMyUser) //Para el usuario que quiera borrar su propia cuenta.
 
 router.delete("/:id", verifyAdmin, deleteUserById) //Borramos usuario mediante el id.(Aqui ponemos verifyAdmin)
+
+router.post("/createList", verifyToken, createList)
 
 
 module.exports = router

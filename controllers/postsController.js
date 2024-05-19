@@ -189,7 +189,7 @@ const addNewReview = async (req, res) => {
         })
         data.save()
         res.status(200).json({
-            status:"succes",
+            status:"success",
             message: "comment added succesfully"
         })
     } catch (error) {

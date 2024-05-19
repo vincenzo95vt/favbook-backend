@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt")
 const  jwt = require("jsonwebtoken");
 const { generateToken, userExist } = require("../utils/utils");
 const { response } = require("express");
+const { error } = require("console");
 
 
 
@@ -295,7 +296,7 @@ const getSearchedUserDetails = async (req, res) => {
 }
 
 
-const getUserCreatorName = async (req, res) =>{
+const getUserCreatorName = async (req, res) => {
     try {
         const userId = req.params.id
         const user = await Users.findById(userId)
@@ -314,5 +315,36 @@ const getUserCreatorName = async (req, res) =>{
     }
 }
 
+const createList = async (req,res) => {
+    try {
+        const userId = req.payload.userId
+        const { name, description } = req.body
+        const data = await Users.findById(userId)
+        console.log(name)
+        console.log(description)
 
-module.exports = {addNewUser, updateUserData, getAllUsers, loginUser, deleteUserById, getUserByName, deleteMyUser ,getUserDetails, refreshToken, getSearchedUserDetails, getUserCreatorName}
+        if(!data) return res.status(404).send("cannot find the user")
+        data.myLists.push({
+            name: name,
+            description: description
+        })
+        console.log("he pasado el if")
+        await data.save()
+        console.log(data)
+
+        res.status(200).json({
+            status:"success",
+            message: "List created succesfully",
+        })      
+
+    } catch (error) {
+        res.status(400).json({
+            status: "Error",
+            message: "Cannot create the list",
+            error: error.message
+        });
+    }
+}
+
+
+module.exports = {addNewUser, updateUserData, getAllUsers, loginUser, deleteUserById, getUserByName, deleteMyUser ,getUserDetails, refreshToken, getSearchedUserDetails, getUserCreatorName, createList}
