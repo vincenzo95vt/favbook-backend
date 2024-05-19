@@ -1,19 +1,27 @@
 const { error } = require("console");
 const Post = require("../models/postsModel");
-const { post } = require("../routers/userRouters");
 
 
 
 const getAllPosts = async (req, res) => {
     try {
-        const posts = await Post.find() //Buscamos en  la base de datos
+        const posts = await Post.find()
+        .populate("userPoster")
+        .populate({
+            path: 'comments',
+            populate: {
+                path: 'usuario',
+                model: 'Users'
+            }
+        });
         if(posts.length === 0) return res.status(204).json({
             status: "success",
             message: "There's no Posts in your database", //Mostramos error si no encontramos nada
         })
+        
         res.status(200).json({
-            status:"sucess",
-            data: posts //Mostramos Posts si encontramos algo en la base de datos.
+            status:"success",
+            data: posts 
         })
     } catch (error) {
         res.status(400).json({
@@ -27,14 +35,29 @@ const getAllPosts = async (req, res) => {
 const getPostById = async (req, res) => {
     try {
         const idPost = req.params.id //recogemos el request del body basandonos en el id.
-        const post = await Post.findById(idPost) //Los mismo que en el getAllposts, pero solamente buscandolo por el id 
+        const post = await Post.findById(idPost)
+        .populate({
+            path: 'comments',
+            populate: {
+                path: 'usuario',
+                model: 'Users'
+            }
+        }); 
         if(!post) return res.status(200).json({
             status: "success",
             message: "There's no post with that id" //Devolvemos error si no encontramos nada con ese id.
         })
+        const postCleaned = {
+            post: post.post,
+            postName: post.postName,
+            description: post.description,
+            userPoster: post.userPoster,
+            comments: post.comments,
+            date: post.date.toLocaleString(),
+        }
         res.status(200).json({
             status: "success",
-            data: post //Devolvemos productos si encontramos
+            data: postCleaned //Devolvemos productos si encontramos
         })
     } catch (error) {
         res.status(400).json({

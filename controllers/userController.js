@@ -2,6 +2,7 @@ const Users = require("../models/profileUserSchema")
 const bcrypt = require("bcrypt")
 const  jwt = require("jsonwebtoken");
 const { generateToken, userExist } = require("../utils/utils");
+const { response } = require("express");
 
 
 
@@ -165,6 +166,43 @@ const updateUserData = async (req, res) =>{
     }
 }
 
+const refreshToken = (req, res) => {
+    try {
+        const payload = req.payload;
+        if(!payload) return res.status(401).json({
+            error: "Acceso denegado"
+        })
+        const user = {
+            userId: payload._id,
+            email: payload.email,
+            name : payload.name,
+            lastName: payload.lastName,
+            userName: payload.userName,
+            description: payload.description,
+            age: payload.age,
+            imgProfile: payload.imgProfile,
+            privacy: payload.privacy
+        }
+        const token = generateToken(user, false)
+        const refresh_token = generateToken(user, true)
+
+        res.status(200).json({
+            status: "success",
+            data: {
+                token,
+                refresh_token
+            }
+        })
+    } catch (error) {
+        res.status(400).json({
+            status: "Error",
+            message: "No se ha podido refrescar el token",
+            error: error.message,
+        })
+    }
+}
+
+
 const deleteUserById = (req, res) =>{
     try {
         const idUser = req.params.id
@@ -224,4 +262,57 @@ const getUserByName = async (req, res) => {
 };
 
 
-module.exports = {addNewUser, updateUserData, getAllUsers, loginUser, deleteUserById, getUserByName, deleteMyUser ,getUserDetails}
+const getSearchedUserDetails = async (req, res) => {
+    try {
+        const userId = req.params.id
+        const userData = await  Users.findById(userId).populate("followers").populate("following");
+        if(!userData) return res.status(404).send("No users with that id")
+
+        const userFollowersCount = userData.followers ? userData.followers.length : 0;
+        const userFollowingCount = userData.following ? userData.following.length : 0;
+        const userLists = userData.myLists ? userData.myLists.length : 0;
+
+
+        const responseData = {
+            ...userData.toObject(),
+            followersCount: userFollowersCount,
+            followingCount: userFollowingCount,
+            lists: userLists
+        };
+        
+        res.status(200).json({
+            status: "success",
+            data: responseData,
+
+        })
+    } catch (error) {
+        res.status(400).json({
+            status: "Error",
+            message: "Cannot provide the details of the user requested",
+            error: error.message
+        });
+    }
+}
+
+
+const getUserCreatorName = async (req, res) =>{
+    try {
+        const userId = req.params.id
+        const user = await Users.findById(userId)
+        if(!user) return res.status(404).send("No users with that id")
+            console.log(user.userName)
+            res.status(200).json({
+            status: "success",
+            data: user.userName,
+            })
+    } catch (error) {
+        res.status(400).json({
+            status: "Error",
+            message: "Cannot provide the name of the user requested",
+            error: error.message
+        });
+    }
+}
+
+
+module.exports = {addNewUser, updateUserData, getAllUsers, loginUser, deleteUserById, getUserByName, deleteMyUser ,getUserDetails, refreshToken, getSearchedUserDetails, getUserCreatorName}
