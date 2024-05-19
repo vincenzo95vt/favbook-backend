@@ -1,6 +1,6 @@
 const router = require("express").Router()
 const { verify } = require("crypto");
-const {addNewUser, updateUserData, getAllUsers, loginUser, getSearchedUserDetails, deleteUserById, getUserByName, deleteMyUser, getUserDetails, refreshToken, getUserCreatorName, createList} = require("../controllers/userController")
+const {addNewUser, updateUserData, getAllUsers, loginUser, getSearchedUserDetails, deleteUserById, getUserByName, deleteMyUser, getUserDetails, refreshToken, getUserCreatorName, createList, addPostToList} = require("../controllers/userController")
 const {verifyToken, verifyAdmin} = require("../middlewares/auth")
 
 /**
@@ -120,6 +120,8 @@ router.delete("/deleteUser", verifyToken, deleteMyUser) //Para el usuario que qu
 router.delete("/:id", verifyAdmin, deleteUserById) //Borramos usuario mediante el id.(Aqui ponemos verifyAdmin)
 
 router.post("/createList", verifyToken, createList)
+
+router.post("/addPostToList/:id", verifyToken, addPostToList)
 
 
 module.exports = router

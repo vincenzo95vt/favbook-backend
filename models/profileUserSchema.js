@@ -22,7 +22,6 @@ const profileUserSchema =  new mongoose.Schema({
     description:{ //Descripcion de perfil de usuario
         type: String,
         require: true,
-        default: ""
     },
     age:{ // Edad que tiene el usuario 
         type: Number,

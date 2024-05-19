@@ -9,11 +9,12 @@ const { error } = require("console");
 
 const addNewUser = async (req, res) =>{
     try {
-        const {userName, email, password, age, name, lastName, genre} = req.body
+        const {userName, email, password, description, age, name, lastName, genre} = req.body
         const user = await new Users({
             userName: userName, 
             email: email, 
             password: await bcrypt.hash(password,10), 
+            description: description,
             age: age, 
             name: name, 
             lastName: lastName, 
@@ -346,5 +347,33 @@ const createList = async (req,res) => {
     }
 }
 
+const addPostToList = async (req,res) => {
+    try {
+        const userId = req.payload.userId
+        const listId = req.params.id
+        const postId = req.body.postId
 
-module.exports = {addNewUser, updateUserData, getAllUsers, loginUser, deleteUserById, getUserByName, deleteMyUser ,getUserDetails, refreshToken, getSearchedUserDetails, getUserCreatorName, createList}
+        const data = await Users.findById(userId)
+        console.log(data)
+        const list = data.myLists.find(list => list._id == listId)
+        console.log(list)
+        list.favouritePosts.push(postId)
+        await data.save()
+        
+        res.status(200).json({
+            status:"success",
+            message: "Post added successfully to the list",
+        }) 
+
+    } catch (error) {
+        res.status(400).json({
+            status: "Error",
+            message: "Cannot push the post",
+            error: error.message
+        });
+    }
+}
+
+
+
+module.exports = {addNewUser, updateUserData, getAllUsers, loginUser, deleteUserById, getUserByName, deleteMyUser ,getUserDetails, refreshToken, getSearchedUserDetails, getUserCreatorName, createList, addPostToList}
