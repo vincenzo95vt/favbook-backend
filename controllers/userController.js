@@ -293,5 +293,24 @@ const getSearchedUserDetails = async (req, res) => {
 }
 
 
+const getUserCreatorName = async (req, res) =>{
+    try {
+        const userId = req.params.id
+        const user = await Users.findById(userId)
+        if(!user) return res.status(404).send("No users with that id")
+            console.log(user.userName)
+            res.status(200).json({
+            status: "success",
+            data: user.userName,
+            })
+    } catch (error) {
+        res.status(400).json({
+            status: "Error",
+            message: "Cannot provide the name of the user requested",
+            error: error.message
+        });
+    }
+}
 
-module.exports = {addNewUser, updateUserData, getAllUsers, loginUser, deleteUserById, getUserByName, deleteMyUser ,getUserDetails, refreshToken, getSearchedUserDetails}
+
+module.exports = {addNewUser, updateUserData, getAllUsers, loginUser, deleteUserById, getUserByName, deleteMyUser ,getUserDetails, refreshToken, getSearchedUserDetails, getUserCreatorName}
