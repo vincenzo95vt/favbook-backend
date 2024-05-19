@@ -1,7 +1,5 @@
 const { error } = require("console");
 const Post = require("../models/postsModel");
-const { post } = require("../routers/userRouters");
-const Users = require("../models/profileUserSchema");
 
 
 
@@ -20,18 +18,6 @@ const getAllPosts = async (req, res) => {
             status: "success",
             message: "There's no Posts in your database", //Mostramos error si no encontramos nada
         })
-        // const newData = posts.map(async post => {
-        //     const user = await Users.findById(post.userPoster)
-        //     return {
-        //         post: post.post,
-        //         postName: post.postName,
-        //         description: post.description,
-        //         userPoster: user.userName,
-        //         comments: post.comments,
-        //         date: post.date,
-        //         favourites: post.favourites
-        //     }
-        // })
         
         res.status(200).json({
             status:"success",
@@ -61,9 +47,17 @@ const getPostById = async (req, res) => {
             status: "success",
             message: "There's no post with that id" //Devolvemos error si no encontramos nada con ese id.
         })
+        const postCleaned = {
+            post: post.post,
+            postName: post.postName,
+            description: post.description,
+            userPoster: post.userPoster,
+            comments: post.comments,
+            date: post.date.toLocaleString(),
+        }
         res.status(200).json({
             status: "success",
-            data: post //Devolvemos productos si encontramos
+            data: postCleaned //Devolvemos productos si encontramos
         })
     } catch (error) {
         res.status(400).json({
